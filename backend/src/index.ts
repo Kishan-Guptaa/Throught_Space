@@ -16,9 +16,13 @@ connectDB();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+app.options("*", cors());
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use(cookieParser());
