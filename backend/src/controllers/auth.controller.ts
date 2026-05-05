@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
+import mongoose from "mongoose";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret";
 
@@ -37,18 +38,18 @@ export const register = async (req: Request, res: Response) => {
       maxAge: 48 * 60 * 60 * 1000,
     });
 
-    res.status(201).json({ 
-      message: "User registered successfully", 
-      user: { 
-        id: newUser._id.toString(), 
-        name: newUser.name, 
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser._id.toString(),
+        name: newUser.name,
         email: newUser.email,
         username: newUser.username,
         profileImage: newUser.profileImage,
         bio: newUser.bio,
         followersCount: 0,
         followingCount: 0
-      } 
+      }
     });
   } catch (error) {
     console.error(error);
@@ -85,9 +86,9 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({
       message: "Login successful",
-      user: { 
-        id: user._id.toString(), 
-        name: user.name, 
+      user: {
+        id: user._id.toString(),
+        name: user.name,
         email: user.email,
         username: user.username,
         profileImage: user.profileImage,
@@ -116,7 +117,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json({ 
+    res.json({
       user: {
         id: user._id.toString(),
         name: user.name,
@@ -127,7 +128,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
         followersCount: user.followers.length,
         followingCount: user.following.length,
         createdAt: user.createdAt
-      } 
+      }
     });
   } catch (error) {
     console.error(error);
@@ -218,7 +219,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.json({ message: "Password reset link sent to your email" });
     } catch (emailError) {
       console.error("Nodemailer Error:", emailError);
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: "Failed to send email. Please check your backend .env credentials.",
         details: emailError instanceof Error ? emailError.message : "SMTP Error"
       });
@@ -285,11 +286,11 @@ export const getUserByUsername = async (req: Request, res: Response) => {
 
     // Check if current user is following
     const currentUserId = (req as any).user?.id;
-    const isFollowing = currentUserId 
-      ? user.followers.some((f: any) => f.toString() === currentUserId) 
+    const isFollowing = currentUserId
+      ? user.followers.some((f: any) => f.toString() === currentUserId)
       : false;
 
-    res.json({ 
+    res.json({
       user: {
         id: user._id,
         name: user.name,
@@ -312,7 +313,7 @@ export const getUserByUsername = async (req: Request, res: Response) => {
 export const getSuggestedUsers = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    
+
     // Get 10 random users excluding current user
     const users = await User.aggregate([
       { $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } } },
