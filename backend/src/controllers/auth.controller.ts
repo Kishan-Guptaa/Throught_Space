@@ -34,7 +34,7 @@ export const register = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 48 * 60 * 60 * 1000,
     });
 
@@ -47,8 +47,8 @@ export const register = async (req: Request, res: Response) => {
         username: newUser.username,
         profileImage: newUser.profileImage,
         bio: newUser.bio,
-        followersCount: 0,
-        followingCount: 0
+        followersCount: newUser.followers?.length || 0,
+        followingCount: newUser.following?.length || 0
       }
     });
   } catch (error) {
@@ -80,7 +80,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 48 * 60 * 60 * 1000, // 48 hours
     });
 
@@ -93,8 +93,8 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         profileImage: user.profileImage,
         bio: user.bio,
-        followersCount: user.followers.length,
-        followingCount: user.following.length
+        followersCount: user.followers?.length || 0,
+        followingCount: user.following?.length || 0
       },
     });
   } catch (error) {
@@ -125,8 +125,8 @@ export const getCurrentUser = async (req: Request, res: Response) => {
         username: user.username,
         profileImage: user.profileImage,
         bio: user.bio,
-        followersCount: user.followers.length,
-        followingCount: user.following.length,
+        followersCount: user.followers?.length || 0,
+        followingCount: user.following?.length || 0,
         createdAt: user.createdAt
       }
     });
@@ -298,8 +298,8 @@ export const getUserByUsername = async (req: Request, res: Response) => {
         profileImage: user.profileImage,
         bio: user.bio,
         socialLinks: user.socialLinks,
-        followersCount: user.followers.length,
-        followingCount: user.following.length,
+        followersCount: user.followers?.length || 0,
+        followingCount: user.following?.length || 0,
         isFollowing
       }
     });
