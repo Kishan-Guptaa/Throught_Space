@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Lock, ArrowRight, Github, Chrome } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, Github, Chrome, AtSign } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
@@ -11,6 +11,7 @@ import api from "@/lib/axios";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +23,7 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/auth/register", { name, email, password });
+      const response = await api.post("/auth/register", { name, username, email, password });
       login(response.data.user);
       toast.success("Account created! Welcome to ThoughtSpace.");
       router.push("/");
@@ -66,6 +67,17 @@ export default function SignupPage() {
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all text-gray-900 dark:text-gray-100 font-medium"
                   placeholder="Full name"
+                />
+              </div>
+              <div className="relative">
+                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white transition-all text-gray-900 dark:text-gray-100 font-medium"
+                  placeholder="Username"
                 />
               </div>
               <div className="relative">
